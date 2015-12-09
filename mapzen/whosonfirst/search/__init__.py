@@ -304,6 +304,18 @@ class index(base):
         iter = self.prepare_files_bulk(files)
         return elasticsearch.helpers.bulk(self.es, iter)
 
+    def index_filelist(self, path):
+
+        def mk_files(fh):
+            for ln in fh.readlines():
+                yield ln.strip()
+
+        fh = open(path, 'r')
+        files = mk_files(fh)
+
+        iter = self.prepare_files_bulk(files)
+        return elasticsearch.helpers.bulk(self.es, iter)
+        
 class query(base):
 
     def __init__(self, **kwargs):
