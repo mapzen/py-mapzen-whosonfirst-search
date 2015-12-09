@@ -15,13 +15,16 @@ setup(
     install_requires=[
         'geojson',
         'elasticsearch',
+        'slack.api>=0.4'	# https://github.com/whosonfirst/py-slack-api
         ],
     dependency_links=[
+        'https://github.com/whosonfirst/py-slack-api/tarball/master#egg=slack.api-0.4',
         ],
     packages=packages,
     scripts=[
         'scripts/wof-es-index',
         'scripts/wof-es-index-files',
+        'scripts/wof-es-index-filelist',
         'scripts/wof-es-prepare',
         'scripts/wof-es-rawquery',
         ],
