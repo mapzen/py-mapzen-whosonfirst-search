@@ -2,3 +2,4 @@ geojson
 logging
 git+git://github.com/whosonfirst/py-mapzen-whosonfirst-placetypes
 git+git://github.com/whosonfirst/py-mapzen-whosonfirst-utils
+git+git://github.com/whosonfirst/py-slack-api.git
