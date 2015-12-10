@@ -17,6 +17,7 @@ if __name__ == '__main__':
     opt_parser.add_option('--host', dest='host', action='store', default='localhost', help='What host your search index lives (default is localhost)')
     opt_parser.add_option('--port', dest='port', action='store', default=9200, help='What port your search index lives on (default is 9200)')
     opt_parser.add_option('--timeout', dest='timeout', action='store', default=600, help='Timeout in seconds for talking to you search index lives on (default is 600)')
+    opt_parser.add_option('--tidy', dest='tidy', action='store_true', default=False, help='Remove files after they are processed (default is False)')
 
     opt_parser.add_option('--slack', dest='slack', action='store_true', default=False, help='Report statistics to a Slack channel (default is False)')
     opt_parser.add_option('--slack-config', dest='slack_config', action='store', default=None, help='The path to your Slack config file')
@@ -36,6 +37,9 @@ if __name__ == '__main__':
     for path in args:
         path = os.path.abspath(path)
         idx.index_filelist(path)
+
+        if option.tidy:
+            os.unlink(path)
 
     dt2 = datetime.datetime.now()
     diff = dt2 - dt1
