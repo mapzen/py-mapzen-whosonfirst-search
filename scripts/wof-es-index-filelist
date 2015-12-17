@@ -38,7 +38,7 @@ if __name__ == '__main__':
         path = os.path.abspath(path)
         idx.index_filelist(path)
 
-        if option.tidy:
+        if options.tidy:
             os.unlink(path)
 
     dt2 = datetime.datetime.now()
