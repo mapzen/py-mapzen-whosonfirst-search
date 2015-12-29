@@ -1,0 +1,47 @@
+#!/usr/bin/env python
+# -*-python-*-
+
+import sys
+import logging
+import pprint
+
+import mapzen.whosonfirst.search
+
+if __name__ == '__main__':
+
+    import optparse
+    opt_parser = optparse.OptionParser()
+
+    opt_parser.add_option('-i', '--id', dest='id', action='store', default=None, help='')
+
+    opt_parser.add_option('--host', dest='host', action='store', default='localhost', help='What host your search index lives (default is localhost)')
+    opt_parser.add_option('--port', dest='port', action='store', default=9200, help='What port your search index lives on (default is 9200)')
+    opt_parser.add_option('--timeout', dest='timeout', action='store', default=600, help='Timeout in seconds for talking to you search index lives on (default is 600)')
+
+    opt_parser.add_option('-v', '--verbose', dest='verbose', action='store_true', default=False, help='Be chatty (default is false)')
+
+    options, args = opt_parser.parse_args()
+
+    if options.verbose:	
+        logging.basicConfig(level=logging.DEBUG)
+    else:
+        logging.basicConfig(level=logging.WARNING)
+
+    if not options.id:
+        logging.error("Missing ID")
+        sys.exit()
+
+    idx = mapzen.whosonfirst.search.query(host=options.host, port=options.port)
+
+    query = {
+        'ids': {
+            'values': [ options.id ]
+        }
+    }
+    
+    body = {
+        'query': query
+    }
+
+    rsp = idx.search(body)
+    print pprint.pformat(rsp)
