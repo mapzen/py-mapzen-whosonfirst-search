@@ -1,5 +1,7 @@
 # py-mapzen-whosonfirst-search
 
+Python packages for talking to the Who's On First (spelunker) Elasticsearch index
+
 ## IMPORTANT
 
 This library is provided as-is, right now. It lacks proper
