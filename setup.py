@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 packages = find_packages()
 version = open("VERSION").read()
-desc = open("README.md").read(),
+desc = open("README.md").read()
 
 setup(
     name='mapzen.whosonfirst.search',
@@ -34,5 +34,5 @@ setup(
         'scripts/wof-es-prepare',
         'scripts/wof-es-rawquery',
         ],
-    download_url='https://github.com/mapzen/py-mapzen-whosonfirst-search/releases/tag/' + version,
+    download_url='https://github.com/whosonfirst/py-mapzen-whosonfirst-search/releases/tag/' + version,
     license='BSD')
