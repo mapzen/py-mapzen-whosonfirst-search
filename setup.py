@@ -1,5 +1,16 @@
 #!/usr/bin/env python
 
+# Remove .egg-info directory if it exists, to avoid dependency problems with
+# partially-installed packages
+
+import os, sys
+from shutil import rmtree
+
+cwd = os.path.dirname(os.path.realpath(sys.argv[0]))
+egg_info = cwd + "/mapzen.whosonfirst.search.egg-info"
+if os.path.exists(egg_info):
+    rmtree(egg_info)
+
 from setuptools import setup, find_packages
 
 packages = find_packages()
