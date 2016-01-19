@@ -12,7 +12,7 @@ setup(
     version=version,
     description='Simple Python wrapper for Who\'s On First search functionality',
     author='Mapzen',
-    url='https://github.com/mapzen/py-mapzen-whosonfirst-search',
+    url='https://github.com/whosonfirst/py-mapzen-whosonfirst-search',
     install_requires=[
         'geojson',
         'elasticsearch',
