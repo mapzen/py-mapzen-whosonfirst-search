@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # Remove .egg-info directory if it exists, to avoid dependency problems with
-# partially-installed packages
+# partially-installed packages (20160119/dphiffer)
 
 import os, sys
 from shutil import rmtree
