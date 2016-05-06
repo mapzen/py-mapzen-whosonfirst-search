@@ -14,6 +14,15 @@ own.
 ### Simple
 
 
+#### Preparing the mappings schema
+
+There is a whosonfirst [mappings schema](https://github.com/whosonfirst/es-whosonfirst-schema), and a simple utility for preparing the ElasticSearch mappings. Running this will ensure that the automatic mappings from ES don't try to get to clever about things like EDTF dates.
+
+```
+cd /usr/local/mapzen/es-whosonfirst-schema
+./bin/reload-schema.sh
+```
+
 #### Indexing
 
 ```
