@@ -316,6 +316,23 @@ class index(base):
         iter = self.prepare_files_bulk(files)
         return elasticsearch.helpers.bulk(self.es, iter)
         
+    def delete_feature(self, feature):
+
+        props = feature['properties']
+        id = props['wof:id']
+
+        doctype = props['wof:placetype']
+        body = self.prepare_geojson(feature)
+
+        kwargs = {
+            'id': id,
+            'index': self.index,
+            'doc_type': doctype,
+            'refresh': True
+        }
+
+        self.es.delete(**kwargs)
+
 class query(base):
 
     def __init__(self, **kwargs):
