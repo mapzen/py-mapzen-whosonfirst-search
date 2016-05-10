@@ -322,7 +322,6 @@ class index(base):
         id = props['wof:id']
 
         doctype = props['wof:placetype']
-        body = self.prepare_geojson(feature)
 
         kwargs = {
             'id': id,
