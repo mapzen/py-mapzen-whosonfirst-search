@@ -215,6 +215,8 @@ class index(base):
             count_names = len(v)
             count_names_total += count_names
 
+            # https://github.com/whosonfirst/whosonfirst-names/issues/3
+
             k = k.replace("name:", "")
             parts = k.split("_x_")
 
