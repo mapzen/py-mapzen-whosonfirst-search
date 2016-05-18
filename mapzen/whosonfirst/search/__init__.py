@@ -162,10 +162,83 @@ class index(base):
 
                 props[n_label] = names
 
-        # Misc counters
+        # Concordances
 
         conc = props.get('wof:concordances', {})
-        props['wof:concordances_count'] = len(conc.items())
+
+        # So this may go away if we can ever figure out a simple way to facet on the
+        # set of unique keys for _all_ `wof:concordances` blobs but today we can't so
+        # this is faster and easier than standing around in ES-quicksand...
+        # (20160518/thisisaaronland)
+
+        props['wof:concordances_sources'] = conc.keys()
+
+        # Misc counters
+
+        # https://github.com/whosonfirst/py-mapzen-whosonfirst-search/issues/13
+
+        props['counts:concordances_total'] = len(conc.items())
+
+        # https://github.com/whosonfirst/py-mapzen-whosonfirst-search/issues/14
+
+        langs_official = props.get('wof:lang_x_official', [])
+        langs_spoken = props.get('wof:lang_x_spoken', [])
+
+        props['counts:languages_official'] = len(langs_official)
+        props['counts:languages_spoken'] = len(langs_spoken)
+
+        count_langs = len(langs_official)
+
+        for lang in langs_spoken:
+
+            if not lang in langs_official:
+                count_langs += 1
+
+        props['counts:languages_total'] = count_langs
+
+        # https://github.com/whosonfirst/py-mapzen-whosonfirst-search/issues/15
+
+        count_names_total = 0
+        count_names_prefered = 0
+        count_names_variant = 0
+        count_names_colloquial = 0
+        count_names_languages = 0
+
+        name_langs = []
+
+        for k, v in props.items():
+
+            if not k.startswith("name:"):
+                continue
+
+            count_names = len(v)
+            count_names_total += count_names
+
+            k = k.replace("name:", "")
+            parts = k.split("_x_")
+
+            lang, qualifier = parts
+
+            if not lang in name_langs:
+                count_names_languages += 1
+                name_langs.append(lang)
+
+            if qualifier == 'prefered':
+                count_names_prefered += count_names
+            elif qualifier == 'variant':
+                count_names_variant += count_names
+            elif qualifier == 'colloquial':
+                count_names_colloquial += count_names
+            else:
+                pass
+
+        props['counts:names_total'] = count_names_total
+        props['counts:names_prefered'] = count_names_prefered
+        props['counts:names_variant'] = count_names_variant
+        props['counts:names_colloquial'] = count_names_colloquial
+        props['counts:names_languages'] = len(name_langs)
+
+        # https://github.com/whosonfirst/py-mapzen-whosonfirst-search/issues/3
 
         props['geom:type'] = geojson['geometry']['type']
 
