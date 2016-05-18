@@ -217,10 +217,14 @@ class index(base):
 
             # https://github.com/whosonfirst/whosonfirst-names/issues/3
 
-            k = k.replace("name:", "")
-            parts = k.split("_x_")
-
-            lang, qualifier = parts
+            try:
+                k = k.replace("name:", "")
+                parts = k.split("_x_")
+                
+                lang, qualifier = parts
+            except Exception, e:
+                logging.error("failed to parse '%s', because %s" % (k, e))
+                continue
 
             if not lang in name_langs:
                 count_names_languages += 1
