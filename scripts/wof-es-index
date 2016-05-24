@@ -17,6 +17,7 @@ if __name__ == '__main__':
     opt_parser.add_option('-b', '--bulk', dest='bulk', action='store_true', default=False, help='Index files in bulk mode (default is False)')
     opt_parser.add_option('-r', '--refresh', dest='refresh', action='store_true', default=False, help='Create a fresh index, which means trying to delete any existing index (default is False)')
 
+    opt_parser.add_option('--index', dest='index', action='store', default='whosonfirst', help='Where to write the records to (default is whosonfirst)')
     opt_parser.add_option('--host', dest='host', action='store', default='localhost', help='What host your search index lives (default is localhost)')
     opt_parser.add_option('--port', dest='port', action='store', default=9200, help='What port your search index lives on (default is 9200)')
     opt_parser.add_option('--timeout', dest='timeout', action='store', default=600, help='Timeout in seconds for talking to you search index lives on (default is 600)')
@@ -25,7 +26,7 @@ if __name__ == '__main__':
 
     options, args = opt_parser.parse_args()
 
-    if options.verbose:	
+    if options.verbose:
         logging.basicConfig(level=logging.DEBUG)
     else:
         logging.basicConfig(level=logging.WARNING)
@@ -53,4 +54,3 @@ if __name__ == '__main__':
                 logging.error("failed to index %s, because %s" % (path, e))
 
     sys.exit()
-

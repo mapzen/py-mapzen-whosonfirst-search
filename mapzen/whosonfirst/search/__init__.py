@@ -33,6 +33,7 @@ class base:
         host = kwargs.get('host', 'localhost')
         port = kwargs.get('port', 9200)
         timeout = kwargs.get('timeout', 600)
+        index = kwargs.get('index', 'whosonfirst')
 
         port = int(port)
         timeout = float(timeout)
@@ -43,16 +44,16 @@ class base:
         self.host = host
         self.port = port
 
-        self.index = 'whosonfirst'
+        self.index = index
         self.doctype = None
 
     def refresh(self):
-
+        logging.warning("Y U REFRESH!??")
         self.es.indices.delete(index=self.index, ignore=[400, 404])
         self.es.indices.create(index=self.index)
-        
+
 class index(base):
-    
+
     def prepare_feature(self, feature):
 
         props = feature['properties']
@@ -68,14 +69,14 @@ class index(base):
             'doc_type': doctype,
             'body': body
         }
-    
+
     # https://stackoverflow.com/questions/20288770/how-to-use-bulk-api-to-store-the-keywords-in-es-by-using-python
 
     def prepare_feature_bulk(self, feature):
 
         props = feature['properties']
         id = props['wof:id']
-    
+
         doctype = props['wof:placetype']
 
         body = self.prepare_geojson(feature)
@@ -175,7 +176,7 @@ class index(base):
         return props
 
     def enstringify(self, data, **kwargs):
-        
+
         ima_int = (
             'continent_id',
             'country_id',
@@ -222,7 +223,7 @@ class index(base):
             return data
 
         elif isa == types.ListType:
-            
+
             str_data = []
 
             for thing in data:
@@ -315,7 +316,7 @@ class index(base):
 
         iter = self.prepare_files_bulk(files)
         return elasticsearch.helpers.bulk(self.es, iter)
-        
+
     def delete_feature(self, feature):
 
         props = feature['properties']
@@ -346,20 +347,20 @@ class query(base):
         # If you need to use any of the characters which function as operators in
         # your query itself (and not as operators), then you should escape them
         # with a leading backslash. For instance, to search for (1+1)=2, you would
-        # need to write your query as \(1\+1\)\=2. 
-        # 
+        # need to write your query as \(1\+1\)\=2.
+        #
         # The reserved characters are: + - = && || > < ! ( ) { } [ ] ^ " ~ * ? : \ /
-        # 
+        #
         # Failing to escape these special characters correctly could lead to a
         # syntax error which prevents your query from running.
-        # 
+        #
         # A space may also be a reserved character. For instance, if you have a
         # synonym list which converts "wi fi" to "wifi", a query_string search for
         # "wi fi" would fail. The query string parser would interpret your query
         # as a search for "wi OR fi", while the token stored in your index is
         # actually "wifi". Escaping the space will protect it from being touched
         # by the query string parser: "wi\ fi"
-        # 
+        #
         # https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html
 
         # note the absence of "&" and "|" which are handled separately
@@ -378,7 +379,7 @@ class query(base):
         while i < length:
 
             char = unistr[i]
-            
+
             if char in to_escape:
                 char = "\%s" % char
 
@@ -414,36 +415,36 @@ class query(base):
         rsp = requests.post(url, data=body)
         return json.loads(rsp.content)
 
-    # https://elasticsearch-py.readthedocs.org/en/master/api.html?highlight=search#elasticsearch.Elasticsearch.search 
+    # https://elasticsearch-py.readthedocs.org/en/master/api.html?highlight=search#elasticsearch.Elasticsearch.search
 
     def search(self, body, **kwargs):
 
         per_page = kwargs.get('per_page', self.per_page)
         page = kwargs.get('page', self.page)
-        
+
         offset = (page - 1) * per_page
         limit = per_page
-        
+
         params = {
             'index': self.index,
             'body': body,
             'from_': offset,
             'size': limit,
         }
-        
+
         if kwargs.get('doctype', None):
             params['doc_type'] = kwargs['doctype']
 
         rsp = self.es.search(**params)
         hits = rsp['hits']
         total = hits['total']
-        
+
         docs = []
-        
+
         for h in hits['hits']:
             feature = self.enfeaturify(h)
             docs.append(feature)
-            
+
         pagination = self.paginate(rsp, **kwargs)
 
         return {'rows': docs, 'pagination': pagination}
@@ -499,11 +500,11 @@ class query(base):
 
         docs = hits['hits']
         count = len(docs)
-            
+
         pages = float(total) / float(per_page)
         pages = math.ceil(pages)
         pages = int(pages)
-            
+
         pagination = {
             'total': total,
             'count': count,
