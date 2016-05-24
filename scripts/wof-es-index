@@ -31,12 +31,13 @@ if __name__ == '__main__':
     else:
         logging.basicConfig(level=logging.WARNING)
 
-    idx = mapzen.whosonfirst.search.index(host=options.host, port=options.port, timeout=options.timeout)
+    idx = mapzen.whosonfirst.search.index(host=options.host, port=options.port, timeout=options.timeout, index=options.index)
 
     if options.refresh:
         logging.info("refreshing the ES index")
         idx.refresh()
 
+    logging.info("indexing from %s to %s" % (options.source, options.index))
     source = os.path.abspath(options.source)
     crawl = mapzen.whosonfirst.utils.crawl(source)
 
