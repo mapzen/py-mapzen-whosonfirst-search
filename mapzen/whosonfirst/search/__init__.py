@@ -119,7 +119,7 @@ class index(base):
 
         for bbq in omgwtf:
             if props.has_key(bbq):
-                logging.warning("remove tag '%s' because ES suffers from E_EXCESSIVE_CLEVERNESS" % bbq)
+                logging.debug("remove tag '%s' because ES suffers from E_EXCESSIVE_CLEVERNESS" % bbq)
                 del(props[bbq])
 
         # alt placetype names/ID
