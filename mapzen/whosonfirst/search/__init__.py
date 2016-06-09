@@ -140,9 +140,18 @@ class index(base):
 
         # Categories
 
-        stz = mapzen.whosonfirst.machinetag.sanitize()
+        categories = []
 
         sg_categories = []
+        sg_categories_exploded = []
+
+        wof_categories = []
+
+        stz = mapzen.whosonfirst.machinetag.sanitize()
+
+        # It's entirely possible that at some point in the (near) future
+        # we will boil all the SG classifiers stuff in to plain old data
+        # in the WOF document itself (20160609/thisisaaronland)
 
         for cl in props.get('sg:classifiers', []):
 
@@ -164,8 +173,21 @@ class index(base):
                 tags.append(mt)
 
             for t in tags:
+
+                mt = mapzen.whosonfirst.machinetag.machinetag(t)
+
+                if not mt.is_machinetag():
+                    logging.warning("SG category fails machinetag test: %s (%s)" % (t, cl))
+                    continue
+
                 if not t in sg_categories:
                     sg_categories.append(t)
+                    sg_categories_exploded.extend(mt.magic_8s())
+
+        # See this - it's all debugging right now
+
+        props["xx:categories"] = sg_categories
+        props["xy:categories"] = sg_categories_exploded
 
         # Names
 
