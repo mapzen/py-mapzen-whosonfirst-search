@@ -12,6 +12,8 @@ import math
 import urllib
 import requests
 
+import mapzen.whosonfirst.machinetag
+
 import mapzen.whosonfirst.utils
 import mapzen.whosonfirst.placetypes
 
@@ -135,6 +137,35 @@ class index(base):
 
         props['wof:placetype_id'] = placetype_id
         props['wof:placetype_names'] = placetype_names
+
+        # Categories
+
+        stz = mapzen.whosonfirst.machinetag.sanitize()
+
+        sg_categories = []
+
+        for cl in props.get('sg:classifiers', []):
+
+            sg_type = cl.get('type', '')
+            sg_category = cl.get('category', '')
+            sg_subcategory = cl.get('subcategory', '')
+
+            clean_type = stz.filter_namespace(sg_type)
+            clean_category = stz.filter_predicate(sg_category)
+            clean_subcategory = stz.filter_value(sg_subcategory)
+
+            tags = []
+
+            mt = "sg:%s=%s" % (clean_type, clean_category)
+            tags.append(mt)
+
+            if sg_category:
+                mt = "%s:%s=%s" % (clean_type, clean_category, clean_subcategory)
+                tags.append(mt)
+
+            for t in tags:
+                if not t in sg_categories:
+                    sg_categories.append(t)
 
         # Names
 

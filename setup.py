@@ -28,13 +28,13 @@ setup(
         'geojson',
         'elasticsearch',
         'slack.api>=0.4',	# https://github.com/whosonfirst/py-slack-api
-        'machinetag>1.2',	# https://github.com/whosonfirst/py-machinetag
+        'mapzen.whosonfirst.machinetag>0.01',
         'mapzen.whosonfirst.utils>=0.18',
         'mapzen.whosonfirst.placetypes>=0.11'
         ],
     dependency_links=[
         'https://github.com/whosonfirst/py-slack-api/tarball/master#egg=slack.api-0.4',
-        'https://github.com/whosonfirst/py-machinetag/tarball/master#egg=machinetag-1.2',
+        'https://github.com/whosonfirst/py-mapzen-whosonfirst-machinetag/tarball/master#egg=mapzen.whosonfirst.machinetag-0.01',
         'https://github.com/whosonfirst/py-mapzen-whosonfirst-utils/tarball/master#egg=mapzen.whosonfirst.utils-0.18',
         'https://github.com/whosonfirst/py-mapzen-whosonfirst-placetypes/tarball/master#egg=mapzen.whosonfirst.placetypes-0.11'
         ],
