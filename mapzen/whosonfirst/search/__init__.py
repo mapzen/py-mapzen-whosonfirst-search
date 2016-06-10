@@ -168,7 +168,7 @@ class index(base):
             mt = "sg:%s=%s" % (clean_type, clean_category)
             tags.append(mt)
 
-            if sg_category:
+            if clean_subcategory != "":
                 mt = "%s:%s=%s" % (clean_type, clean_category, clean_subcategory)
                 tags.append(mt)
 
@@ -177,11 +177,11 @@ class index(base):
                 mt = mapzen.whosonfirst.machinetag.machinetag(t)
 
                 if not mt.is_machinetag():
-                    logging.warning("SG category fails machinetag test: %s (%s)" % (t, cl))
+                    logging.warning("SG category fails machinetag test: '%s' (%s)" % (t, cl))
                     continue
 
                 if not t in sg_categories:
-                    sg_categories.append(t)
+                    sg_categories.append(mt.enpathify())
                     sg_categories_exploded.extend(mt.magic_8s())
 
         # See this - it's all debugging right now
