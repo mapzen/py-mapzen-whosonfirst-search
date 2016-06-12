@@ -143,8 +143,6 @@ class index(base):
         categories = []
 
         sg_categories = []
-        sg_categories_exploded = []
-
         wof_categories = []
 
         stz = mapzen.whosonfirst.machinetag.sanitize()
@@ -182,12 +180,10 @@ class index(base):
 
                 if not t in sg_categories:
                     sg_categories.append(mt.enpathify())
-                    sg_categories_exploded.extend(mt.magic_8s())
 
         # See this - it's all debugging right now
 
-        props["xx:categories"] = sg_categories
-        props["xy:categories"] = sg_categories_exploded
+        props["sg:categories"] = sg_categories
 
         # Names
 
