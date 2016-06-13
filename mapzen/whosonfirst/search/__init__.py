@@ -13,6 +13,7 @@ import urllib
 import requests
 
 import mapzen.whosonfirst.machinetag
+import machinetag.elasticsearch.hierarchy
 
 import mapzen.whosonfirst.utils
 import mapzen.whosonfirst.placetypes
@@ -142,14 +143,46 @@ class index(base):
 
         categories = []
 
-        sg_categories = []
+        # wof categories
+
         wof_categories = []
 
-        stz = mapzen.whosonfirst.machinetag.sanitize()
+        for tag in props.get('wof:categories', []):
 
-        # It's entirely possible that at some point in the (near) future
-        # we will boil all the SG classifiers stuff in to plain old data
-        # in the WOF document itself (20160609/thisisaaronland)
+            mt = mapzen.whosonfirst.machinetag.machinetag(tag)
+
+            if not mt.is_machinetag():
+                logging.warning("%s is not a valid wof:categories machine tag, skipping" % tag)
+                continue
+
+            enpathified = machinetag.elasticsearch.hierarchy.enpathify_from_machintag(tag)
+
+            if not enpathified in wof_categories:
+                wof_categories.append(enpathified)
+
+        props["wof:categories"] = wof_categories
+
+        # simplegeo categories
+
+        sg_categories = []
+        
+        for tag in props.get('sg:categories', []):
+
+            mt = mapzen.whosonfirst.machinetag.machinetag(tag)
+
+            if not mt.is_machinetag():
+                logging.warning("%s is not a valid sg:categories machine tag, skipping" % tag)
+                continue
+
+            enpathified = machinetag.elasticsearch.hierarchy.enpathify_from_machintag(tag)
+
+            if not enpathified in sg_categories:
+                sg_categories.append(enpathified)
+
+        # old historical stuff that we may ignore/purge in time... but
+        # not today (20160613/thisisaaronland)
+
+        stz = mapzen.whosonfirst.machinetag.sanitize()
 
         for cl in props.get('sg:classifiers', []):
 
@@ -175,13 +208,13 @@ class index(base):
                 mt = mapzen.whosonfirst.machinetag.machinetag(t)
 
                 if not mt.is_machinetag():
-                    logging.warning("SG category fails machinetag test: '%s' (%s)" % (t, cl))
+                    logging.warning("sg category fails machinetag test: '%s' (%s)" % (t, cl))
                     continue
 
-                if not t in sg_categories:
-                    sg_categories.append(mt.enpathify())
+                enpathified = machinetag.elasticsearch.hierarchy.enpathify_from_machintag(t)
 
-        # See this - it's all debugging right now
+                if not enpathified in sg_categories:
+                    sg_categories.append(enpathified)
 
         props["sg:categories"] = sg_categories
 
