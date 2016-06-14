@@ -27,10 +27,10 @@ setup(
     install_requires=[
         'geojson',
         'elasticsearch',
-        'slack.api>=0.4',	# https://github.com/whosonfirst/py-slack-api
+        'slack.api>=0.4',
         'mapzen.whosonfirst.machinetag>=0.041',
         'mapzen.whosonfirst.utils>=0.18',
-        'mapzen.whosonfirst.placetypes>=0.11'
+        'mapzen.whosonfirst.placetypes>=0.11',
         'machinetag.elasticsearch>=0.03',
         ],
     dependency_links=[
