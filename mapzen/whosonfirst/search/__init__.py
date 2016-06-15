@@ -466,11 +466,17 @@ class index(base):
         iter = self.prepare_files_bulk(files)
         return elasticsearch.helpers.bulk(self.es, iter)
 
-    def index_filelist(self, path):
+    def index_filelist(self, path, **kwargs):
 
         def mk_files(fh):
             for ln in fh.readlines():
-                yield ln.strip()
+                path = ln.strip()
+
+                if kwargs.get('prefix', None):
+                    path = os.path.join(kwargs['prefix'], path)
+
+                logging.debug("index %s" % path)
+                yield path
 
         fh = open(path, 'r')
         files = mk_files(fh)
