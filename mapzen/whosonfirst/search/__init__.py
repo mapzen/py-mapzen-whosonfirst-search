@@ -155,7 +155,7 @@ class index(base):
                 logging.warning("%s is not a valid wof:categories machine tag, skipping" % tag)
                 continue
 
-            enpathified = machinetag.elasticsearch.hierarchy.enpathify_from_machintag(tag)
+            enpathified = machinetag.elasticsearch.hierarchy.enpathify_from_machinetag(mt)
 
             if not enpathified in wof_categories:
                 wof_categories.append(enpathified)
@@ -174,7 +174,7 @@ class index(base):
                 logging.warning("%s is not a valid sg:categories machine tag, skipping" % tag)
                 continue
 
-            enpathified = machinetag.elasticsearch.hierarchy.enpathify_from_machintag(tag)
+            enpathified = machinetag.elasticsearch.hierarchy.enpathify_from_machinetag(mt)
 
             if not enpathified in sg_categories:
                 sg_categories.append(enpathified)
@@ -211,7 +211,7 @@ class index(base):
                     logging.warning("sg category fails machinetag test: '%s' (%s)" % (t, cl))
                     continue
 
-                enpathified = machinetag.elasticsearch.hierarchy.enpathify_from_machintag(t)
+                enpathified = machinetag.elasticsearch.hierarchy.enpathify_from_machinetag(mt)
 
                 if not enpathified in sg_categories:
                     sg_categories.append(enpathified)
