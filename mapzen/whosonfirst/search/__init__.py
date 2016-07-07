@@ -218,33 +218,6 @@ class index(base):
 
         props["sg:categories"] = sg_categories
 
-        # Names
-
-        for k, v in props.items():
-
-            if not k.startswith("name:", False):
-                continue
-
-            # please actually parse me using mz-wof-names
-            # https://github.com/whosonfirst/py-mapzen-whosonfirst-names
-            # (20151030/thisisaaronland)
-
-            parts = k.split("_x_")
-
-            # https://github.com/whosonfirst/py-mapzen-whosonfirst-search/issues/5
-            # see above (20151030/thisisaaronland)
-
-            if len(parts) == 2:
-
-                label = parts[1]
-
-                n_label = "name_%s" % label
-
-                names = props.get(n_label, [])
-                names.extend(v)
-
-                props[n_label] = names
-
         # Concordances
 
         conc = props.get('wof:concordances', {})
