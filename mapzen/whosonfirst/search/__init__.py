@@ -162,6 +162,25 @@ class index(base):
 
         props["wof:categories"] = wof_categories
 
+        # mz categories
+
+        mz_categories = []
+
+        for tag in props.get('mz:categories', []):
+
+            mt = mapzen.whosonfirst.machinetag.machinetag(tag)
+
+            if not mt.is_machinetag():
+                logging.warning("%s is not a valid wof:categories machine tag, skipping" % tag)
+                continue
+
+            enpathified = machinetag.elasticsearch.hierarchy.enpathify_from_machinetag(mt)
+
+            if not enpathified in mz_categories:
+                mz_categories.append(enpathified)
+
+        props["mz:categories"] = mz_categories
+
         # simplegeo categories
 
         sg_categories = []
