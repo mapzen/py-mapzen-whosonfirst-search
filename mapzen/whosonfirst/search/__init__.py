@@ -242,6 +242,14 @@ class index(base):
 
         conc = props.get('wof:concordances', {})
 
+
+        # Because Boundary Issues was careless with how it encoded 'array()'
+        # See: https://github.com/whosonfirst/whosonfirst-www-boundaryissues/commit/436607e41b51890080064515582240bbedda633f
+        # (20161031/dphiffer)
+        if conc == []:
+            logging.warning("FIX %d concordances encoded as []" % props['wof:id'])
+            conc = {}
+
         # So this may go away if we can ever figure out a simple way to facet on the
         # set of unique keys for _all_ `wof:concordances` blobs but today we can't so
         # this is faster and easier than standing around in ES-quicksand...
@@ -295,7 +303,7 @@ class index(base):
             try:
                 k = k.replace("name:", "")
                 parts = k.split("_x_")
-                
+
                 lang, qualifier = parts
             except Exception, e:
                 logging.error("failed to parse '%s', because %s" % (k, e))
@@ -325,6 +333,13 @@ class index(base):
         props['geom:type'] = geojson['geometry']['type']
 
         # because ES suffers from E_EXCESSIVE_CLEVERNESS
+
+        # Because, for a time, Boundary Issues did not have the capacity to
+        # *remove* properties, and I was incorrectly setting edtf:deprecated
+        # to 'uuuu'. (20161103/dphiffer)
+        if 'edtf:deprecated' in props and props['edtf:deprecated'] == 'uuuu':
+            logging.warning("FIX %d edtf:deprecated set to uuuu" % props['wof:id'])
+            del props['edtf:deprecated']
 
         props = self.enstringify(props)
         return props
