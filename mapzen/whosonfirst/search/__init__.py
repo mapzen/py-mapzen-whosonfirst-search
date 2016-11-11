@@ -483,7 +483,7 @@ class index(mapzen.whosonfirst.elasticsearch.index):
 
         raise Exception, "Please implement me"
 
-class query(mapzen.whosonfirst.elasticsearch.query):
+class search(mapzen.whosonfirst.elasticsearch.search):
 
     def __init__(self, **kwargs):
 
@@ -529,6 +529,13 @@ class query(mapzen.whosonfirst.elasticsearch.query):
             'geometry': geom,
             'properties': properties
         }
+
+class query(search):
+
+    def __init__(self, **kwargs):
+
+        logging.warning("mapzen.whosonfirst.search.query is deprecated - please use mapzen.whosonfirst.search.search")
+        search.__init__(self, **kwargs)
 
 if __name__ == '__main__':
 
