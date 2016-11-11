@@ -27,18 +27,18 @@ setup(
     install_requires=[
         'geojson',
         'elasticsearch',
-        'slack.api>=0.4',
         'mapzen.whosonfirst.machinetag>=0.05',
         'mapzen.whosonfirst.utils>=0.37',
         'mapzen.whosonfirst.placetypes>=0.21',
+        'mapzen.whosonfirst.elasticsearch>=0.012',
         'machinetag.elasticsearch>=0.03',
         ],
     dependency_links=[
-        'https://github.com/whosonfirst/py-slack-api/tarball/master#egg=slack.api-0.4',
         'https://github.com/whosonfirst/py-machinetag-elasticsearch/tarball/master#egg=machinetag.elasticsearch-0.03',
         'https://github.com/whosonfirst/py-mapzen-whosonfirst-machinetag/tarball/master#egg=mapzen.whosonfirst.machinetag-0.05',
         'https://github.com/whosonfirst/py-mapzen-whosonfirst-utils/tarball/master#egg=mapzen.whosonfirst.utils-0.37',
-        'https://github.com/whosonfirst/py-mapzen-whosonfirst-placetypes/tarball/master#egg=mapzen.whosonfirst.placetypes-0.21'
+        'https://github.com/whosonfirst/py-mapzen-whosonfirst-placetypes/tarball/master#egg=mapzen.whosonfirst.placetypes-0.21',
+        'https://github.com/whosonfirst/py-mapzen-whosonfirst-elasticsearch/tarball/master#egg=mapzen.whosonfirst.elasticsearch-0.012'
         ],
     packages=packages,
     scripts=[
