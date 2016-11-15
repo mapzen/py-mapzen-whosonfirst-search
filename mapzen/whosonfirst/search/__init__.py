@@ -14,45 +14,13 @@ import machinetag.elasticsearch.hierarchy
 
 import mapzen.whosonfirst.utils
 import mapzen.whosonfirst.placetypes
+import mapzen.whosonfirst.elasticsearch
 
-# https://elasticsearch-py.readthedocs.org/en/master/
-
-import elasticsearch
-import elasticsearch.helpers
-
-# wuh...
-# https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-bulk.html
-
-# return stuff that can be passed to:
-# https://www.elastic.co/guide/en/elasticsearch/client/python-api/current/index.html
-
-class base:
+class index(mapzen.whosonfirst.elasticsearch.index):
 
     def __init__(self, **kwargs):
 
-        host = kwargs.get('host', 'localhost')
-        port = kwargs.get('port', 9200)
-        timeout = kwargs.get('timeout', 600)
-        index = kwargs.get('index', 'whosonfirst')
-
-        port = int(port)
-        timeout = float(timeout)
-
-        es = elasticsearch.Elasticsearch(host=host, port=port, timeout=timeout)
-        self.es = es
-
-        self.host = host
-        self.port = port
-
-        self.index = index
-        self.doctype = None
-
-    def refresh(self):
-        logging.warning("Y U REFRESH!??")
-        self.es.indices.delete(index=self.index, ignore=[400, 404])
-        self.es.indices.create(index=self.index)
-
-class index(base):
+        mapzen.whosonfirst.elasticsearch.index.__init__(self, **kwargs)
 
     def prepare_feature(self, feature):
 
@@ -464,12 +432,13 @@ class index(base):
         path = os.path.abspath(path)
         data = self.prepare_file(path)
 
-        return self.es.index(**data)
+        return self.index_document(data)
 
     def index_files(self, files):
 
         iter = self.prepare_files_bulk(files)
-        return elasticsearch.helpers.bulk(self.es, iter)
+
+        return self.index_documents_bulk(iter)
 
     def index_filelist(self, path, **kwargs):
 
@@ -487,7 +456,8 @@ class index(base):
         files = mk_files(fh)
 
         iter = self.prepare_files_bulk(files)
-        return elasticsearch.helpers.bulk(self.es, iter)
+
+        return self.index_documents_bulk(iter)
 
     def delete_feature(self, feature):
 
@@ -503,123 +473,13 @@ class index(base):
             'refresh': True
         }
 
-        self.es.delete(**kwargs)
+        self.delete_document(kwargs)
 
-class query(base):
+class search(mapzen.whosonfirst.elasticsearch.search):
 
     def __init__(self, **kwargs):
 
-        base.__init__(self, **kwargs)
-
-        self.page = kwargs.get('page', 1)
-        self.per_page = kwargs.get('per_page', 20)
-
-    def escape(self, str):
-
-        # If you need to use any of the characters which function as operators in
-        # your query itself (and not as operators), then you should escape them
-        # with a leading backslash. For instance, to search for (1+1)=2, you would
-        # need to write your query as \(1\+1\)\=2.
-        #
-        # The reserved characters are: + - = && || > < ! ( ) { } [ ] ^ " ~ * ? : \ /
-        #
-        # Failing to escape these special characters correctly could lead to a
-        # syntax error which prevents your query from running.
-        #
-        # A space may also be a reserved character. For instance, if you have a
-        # synonym list which converts "wi fi" to "wifi", a query_string search for
-        # "wi fi" would fail. The query string parser would interpret your query
-        # as a search for "wi OR fi", while the token stored in your index is
-        # actually "wifi". Escaping the space will protect it from being touched
-        # by the query string parser: "wi\ fi"
-        #
-        # https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html
-
-        # note the absence of "&" and "|" which are handled separately
-
-        to_escape = [
-            "+", "-", "=", ">", "<", "!", "(", ")", "{", "}", "[", "]", "^", '"', "~", "*", "?", ":", "\\", "/"
-        ]
-
-        escaped = []
-
-        unistr = str.decode("utf-8")
-        length = len(unistr)
-
-        i = 0
-
-        while i < length:
-
-            char = unistr[i]
-
-            if char in to_escape:
-                char = "\%s" % char
-
-            elif char in ("&", "|"):
-
-                if (i + 1) < length and unistr[ i + 1 ] == char:
-                    char = "\%s" % char
-            else:
-                pass
-
-            escaped.append(char)
-            i += 1
-
-        return "".join(escaped)
-
-    # because who knows what elasticsearch-py is doing half the time...
-    # (20150805/thisisaaronland)
-
-    def search_raw(self, **args):
-
-        path = args.get('path', '_search')
-        body = args.get('body', {})
-        query = args.get('query', {})
-
-        url = "http://%s:%s/%s/%s" % (self.host, self.port, self.index, path)
-
-        if len(query.keys()):
-            q = urllib.urlencode(query)
-            url = url + "?" + q
-
-        body = json.dumps(body)
-
-        rsp = requests.post(url, data=body)
-        return json.loads(rsp.content)
-
-    # https://elasticsearch-py.readthedocs.org/en/master/api.html?highlight=search#elasticsearch.Elasticsearch.search
-
-    def search(self, body, **kwargs):
-
-        per_page = kwargs.get('per_page', self.per_page)
-        page = kwargs.get('page', self.page)
-
-        offset = (page - 1) * per_page
-        limit = per_page
-
-        params = {
-            'index': self.index,
-            'body': body,
-            'from_': offset,
-            'size': limit,
-        }
-
-        if kwargs.get('doctype', None):
-            params['doc_type'] = kwargs['doctype']
-
-        rsp = self.es.search(**params)
-        hits = rsp['hits']
-        total = hits['total']
-
-        docs = []
-
-        for h in hits['hits']:
-            feature = self.enfeaturify(h)
-            docs.append(feature)
-
-        pagination = self.paginate(rsp, **kwargs)
-
-        return {'rows': docs, 'pagination': pagination}
+        mapzen.whosonfirst.elasticsearch.query.__init__(self, **kwargs)
 
     def enfeaturify(self, row):
 
@@ -662,32 +522,13 @@ class query(base):
             'properties': properties
         }
 
-    def paginate(self, rsp, **kwargs):
+class query(search):
 
-        per_page = kwargs.get('per_page', self.per_page)
-        page = kwargs.get('page', self.page)
+    def __init__(self, **kwargs):
 
-        hits = rsp['hits']
-        total = hits['total']
-
-        docs = hits['hits']
-        count = len(docs)
-
-        pages = float(total) / float(per_page)
-        pages = math.ceil(pages)
-        pages = int(pages)
-
-        pagination = {
-            'total': total,
-            'count': count,
-            'per_page': per_page,
-            'page': page,
-            'pages': pages
-        }
-
-        return pagination
+        logging.warning("mapzen.whosonfirst.search.query is deprecated - please use mapzen.whosonfirst.search.search")
+        search.__init__(self, **kwargs)
 
 if __name__ == '__main__':
 
-            q = query();
-            print q.escape("aaron+bob\\&&")
+    print "Please rewrite me"
