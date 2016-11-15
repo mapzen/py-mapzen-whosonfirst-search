@@ -432,17 +432,13 @@ class index(mapzen.whosonfirst.elasticsearch.index):
         path = os.path.abspath(path)
         data = self.prepare_file(path)
 
-        # FIX ME: THIS NEEDS TO CALL SOMETHING IN mapzen.whosonfirst.elasticsearch.index
-
-        raise Exception, "Please implement me"
+        return self.index_document(data)
 
     def index_files(self, files):
 
         iter = self.prepare_files_bulk(files)
 
-        # FIX ME: THIS NEEDS TO CALL SOMETHING IN mapzen.whosonfirst.elasticsearch.index
-
-        raise Exception, "Please implement me"
+        return self.index_documents_bulk(iter)
 
     def index_filelist(self, path, **kwargs):
 
@@ -461,9 +457,7 @@ class index(mapzen.whosonfirst.elasticsearch.index):
 
         iter = self.prepare_files_bulk(files)
 
-        # FIX ME: THIS NEEDS TO CALL SOMETHING IN mapzen.whosonfirst.elasticsearch.index
-
-        raise Exception, "Please implement me"
+        return self.index_documents_bulk(iter)
 
     def delete_feature(self, feature):
 
@@ -479,9 +473,7 @@ class index(mapzen.whosonfirst.elasticsearch.index):
             'refresh': True
         }
 
-        # FIX ME: THIS NEEDS TO CALL SOMETHING IN mapzen.whosonfirst.elasticsearch.index
-
-        raise Exception, "Please implement me"
+        self.delete_document(kwargs)
 
 class search(mapzen.whosonfirst.elasticsearch.search):
 
