@@ -1,10 +1,12 @@
 import types
+import os
 import os.path
 import csv
 import json
 import geojson
 import logging
 import math
+import tempfile
 
 import urllib
 import requests
@@ -41,7 +43,7 @@ class index(mapzen.whosonfirst.elasticsearch.index):
     # https://stackoverflow.com/questions/20288770/how-to-use-bulk-api-to-store-the-keywords-in-es-by-using-python
 
     def prepare_feature_bulk(self, feature):
-
+       
         props = feature['properties']
         id = props['wof:id']
 
@@ -306,6 +308,26 @@ class index(mapzen.whosonfirst.elasticsearch.index):
             logging.warning("FIX %d edtf:deprecated set to uuuu" % props['wof:id'])
             del props['edtf:deprecated']
 
+        #
+        
+        fh = tempfile.NamedTemporaryFile()
+        tmpname = fh.name
+
+        json.dump(geojson, fh)
+        fsize = os.stat(tmpname).st_size
+
+        fh.close()
+
+        # this should never happen because fh.close should
+        # remove the file but just in case...
+        
+        if os.exists(tmpname):
+            os.unlink(tmpname)
+
+        props['mz:filesize'] = fsize
+        
+        #
+ 
         props = self.enstringify(props)
         return props
 
