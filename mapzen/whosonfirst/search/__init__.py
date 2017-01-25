@@ -304,6 +304,7 @@ class index(mapzen.whosonfirst.elasticsearch.index):
         # Because, for a time, Boundary Issues did not have the capacity to
         # *remove* properties, and I was incorrectly setting edtf:deprecated
         # to 'uuuu'. (20161103/dphiffer)
+
         if 'edtf:deprecated' in props and props['edtf:deprecated'] == 'uuuu':
             logging.warning("FIX %d edtf:deprecated set to uuuu" % props['wof:id'])
             del props['edtf:deprecated']
@@ -321,7 +322,7 @@ class index(mapzen.whosonfirst.elasticsearch.index):
         # this should never happen because fh.close should
         # remove the file but just in case...
         
-        if os.exists(tmpname):
+        if os.path.exists(tmpname):
             os.unlink(tmpname)
 
         props['mz:filesize'] = fsize
