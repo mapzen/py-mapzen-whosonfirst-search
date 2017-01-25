@@ -17,6 +17,7 @@ import machinetag.elasticsearch.hierarchy
 import mapzen.whosonfirst.utils
 import mapzen.whosonfirst.placetypes
 import mapzen.whosonfirst.elasticsearch
+import mapzen.whosonfirst.uri
 
 class index(mapzen.whosonfirst.elasticsearch.index):
 
@@ -445,12 +446,20 @@ class index(mapzen.whosonfirst.elasticsearch.index):
 
             logging.debug("prepare file %s" % path)
 
+            if mapzen.whosonfirst.uri.is_alt_file(path):
+                logging.warning("%s is an alt file so not indexing it" % path)
+                continue
+
             data = self.prepare_file_bulk(path)
             logging.debug("yield %s" % data)
 
             yield data
 
     def index_file(self, path):
+
+        if mapzen.whosonfirst.uri.is_alt_file(path):
+            logging.warning("%s is an alt file so not indexing it" % path)
+            return False
 
         path = os.path.abspath(path)
         data = self.prepare_file(path)
@@ -471,6 +480,10 @@ class index(mapzen.whosonfirst.elasticsearch.index):
 
                 if kwargs.get('prefix', None):
                     path = os.path.join(kwargs['prefix'], path)
+
+                if mapzen.whosonfirst.uri.is_alt_file(path):
+                    logging.warning("%s is an alt file so not indexing it" % path)
+                    continue
 
                 logging.debug("index %s" % path)
                 yield path

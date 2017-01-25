@@ -26,9 +26,9 @@ setup(
     url='https://github.com/whosonfirst/py-mapzen-whosonfirst-search',
     install_requires=[
         'geojson',
-        'elasticsearch',
         'mapzen.whosonfirst.machinetag>=0.05',
         'mapzen.whosonfirst.utils>=0.37',
+        'mapzen.whosonfirst.uri>=0.312',
         'mapzen.whosonfirst.placetypes>=0.21',
         'mapzen.whosonfirst.elasticsearch>=0.025',
         'machinetag.elasticsearch>=0.03',
@@ -37,6 +37,7 @@ setup(
         'https://github.com/whosonfirst/py-machinetag-elasticsearch/tarball/master#egg=machinetag.elasticsearch-0.03',
         'https://github.com/whosonfirst/py-mapzen-whosonfirst-machinetag/tarball/master#egg=mapzen.whosonfirst.machinetag-0.05',
         'https://github.com/whosonfirst/py-mapzen-whosonfirst-utils/tarball/master#egg=mapzen.whosonfirst.utils-0.37',
+        'https://github.com/whosonfirst/py-mapzen-whosonfirst-uri/tarball/master#egg=mapzen.whosonfirst.uri-0.312',
         'https://github.com/whosonfirst/py-mapzen-whosonfirst-placetypes/tarball/master#egg=mapzen.whosonfirst.placetypes-0.21',
         'https://github.com/whosonfirst/py-mapzen-whosonfirst-elasticsearch/tarball/master#egg=mapzen.whosonfirst.elasticsearch-0.025'
         ],
