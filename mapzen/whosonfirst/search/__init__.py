@@ -306,7 +306,7 @@ class index(mapzen.whosonfirst.elasticsearch.index):
         # *remove* properties, and I was incorrectly setting edtf:deprecated
         # to 'uuuu'. (20161103/dphiffer)
 
-        if 'edtf:deprecated' in props and props['edtf:deprecated'] == 'uuuu':
+        if "edtf:deprecated" in props and props['edtf:deprecated'] in ("uuuu", ""):
             logging.warning("FIX %d edtf:deprecated set to uuuu" % props['wof:id'])
             del props['edtf:deprecated']
 
