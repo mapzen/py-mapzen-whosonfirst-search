@@ -35,11 +35,11 @@ setup(
         ],
     dependency_links=[
         'https://github.com/whosonfirst/py-machinetag-elasticsearch/tarball/master#egg=machinetag.elasticsearch',
-        'https://github.com/whosonfirst/py-mapzen-whosonfirst-elasticsearch/tarball/master'
-        'https://github.com/whosonfirst/py-mapzen-whosonfirst-machinetag/tarball/master',
-        'https://github.com/whosonfirst/py-mapzen-whosonfirst-placetypes/tarball/master',
-        'https://github.com/whosonfirst/py-mapzen-whosonfirst-utils/tarball/master',
-        'https://github.com/whosonfirst/py-mapzen-whosonfirst-uri/tarball/master',
+        'https://github.com/whosonfirst/py-mapzen-whosonfirst-elasticsearch/tarball/master#egg=mapzen.whosonfirst.elasticsearch'
+        'https://github.com/whosonfirst/py-mapzen-whosonfirst-machinetag/tarball/master#egg=mapzen.whosonfirst.machinetag',
+        'https://github.com/whosonfirst/py-mapzen-whosonfirst-placetypes/tarball/master#egg=mapzen.whosonfirst.placetypes',
+        'https://github.com/whosonfirst/py-mapzen-whosonfirst-utils/tarball/master#egg=mapzen.whosonfirst.utils',
+        'https://github.com/whosonfirst/py-mapzen-whosonfirst-uri/tarball/master#egg=mapzen.whosonfirst.uri',
         ],
     packages=packages,
     scripts=[
