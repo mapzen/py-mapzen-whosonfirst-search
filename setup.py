@@ -34,7 +34,7 @@ setup(
         'mapzen.whosonfirst.uri',
         ],
     dependency_links=[
-        'https://github.com/whosonfirst/py-machinetag-elasticsearch/tarball/master#egg=machinetag.elasticsearch',
+        'https://github.com/whosonfirst/py-machinetag-elasticsearch/tarball/master#egg=machinetag.elasticsearch-0.031',
         'https://github.com/whosonfirst/py-mapzen-whosonfirst-elasticsearch/tarball/master#egg=mapzen.whosonfirst.elasticsearch'
         'https://github.com/whosonfirst/py-mapzen-whosonfirst-machinetag/tarball/master#egg=mapzen.whosonfirst.machinetag',
         'https://github.com/whosonfirst/py-mapzen-whosonfirst-placetypes/tarball/master#egg=mapzen.whosonfirst.placetypes',
