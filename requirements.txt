@@ -1,5 +1,5 @@
 geojson
-https://github.com/whosonfirst/py-machinetag-elasticsearch
+git+git://github.com/whosonfirst/py-machinetag-elasticsearch
 git+git://github.com/whosonfirst/py-mapzen-whosonfirst-elasticsearch
 git+git://github.com/whosonfirst/py-mapzen-whosonfirst-machinetag
 git+git://github.com/whosonfirst/py-mapzen-whosonfirst-placetypes
