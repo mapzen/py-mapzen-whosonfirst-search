@@ -2,6 +2,12 @@
 
 Python packages for talking to the Who's On First (spelunker) Elasticsearch index
 
+## Install
+
+```
+sudo pip install -r requirements.txt .
+```
+
 ## IMPORTANT
 
 This library is provided as-is, right now. It lacks proper

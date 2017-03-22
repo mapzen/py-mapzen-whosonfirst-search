@@ -24,23 +24,6 @@ setup(
     description='Simple Python wrapper for Who\'s On First search functionality',
     author='Mapzen',
     url='https://github.com/whosonfirst/py-mapzen-whosonfirst-search',
-    install_requires=[
-        'geojson',
-        'machinetag.elasticsearch',
-        'mapzen.whosonfirst.elasticsearch',
-        'mapzen.whosonfirst.machinetag',
-        'mapzen.whosonfirst.placetypes',
-        'mapzen.whosonfirst.utils',
-        'mapzen.whosonfirst.uri',
-        ],
-    dependency_links=[
-        'https://github.com/whosonfirst/py-machinetag-elasticsearch/tarball/master#egg=machinetag.elasticsearch-0.031',
-        'https://github.com/whosonfirst/py-mapzen-whosonfirst-elasticsearch/tarball/master#egg=mapzen.whosonfirst.elasticsearch'
-        'https://github.com/whosonfirst/py-mapzen-whosonfirst-machinetag/tarball/master#egg=mapzen.whosonfirst.machinetag',
-        'https://github.com/whosonfirst/py-mapzen-whosonfirst-placetypes/tarball/master#egg=mapzen.whosonfirst.placetypes',
-        'https://github.com/whosonfirst/py-mapzen-whosonfirst-utils/tarball/master#egg=mapzen.whosonfirst.utils',
-        'https://github.com/whosonfirst/py-mapzen-whosonfirst-uri/tarball/master#egg=mapzen.whosonfirst.uri',
-        ],
     packages=packages,
     scripts=[
         'scripts/wof-es-id',
