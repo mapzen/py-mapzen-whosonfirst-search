@@ -284,7 +284,7 @@ class index(mapzen.whosonfirst.elasticsearch.index):
                 # eng_x_prefered
 
                 if not k in languages:
-                    languages:append(k)
+                    languages.append(k)
 
             except Exception, e:
                 logging.error("failed to parse '%s', because %s" % (k, e))
