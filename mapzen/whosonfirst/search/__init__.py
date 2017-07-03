@@ -258,7 +258,7 @@ class index(mapzen.whosonfirst.elasticsearch.index):
 
         name_langs = []
 
-        languages = [];
+        translations = [];
 
         for k, v in props.items():
 
@@ -278,13 +278,13 @@ class index(mapzen.whosonfirst.elasticsearch.index):
 
                 # eng
 
-                if not lang in languages:
-                    languages.append(lang)
+                if not lang in translations:
+                    translations.append(lang)
 
                 # eng_x_prefered
 
-                if not k in languages:
-                    languages.append(k)
+                if not k in translations:
+                    translations.append(k)
 
             except Exception, e:
                 logging.error("failed to parse '%s', because %s" % (k, e))
@@ -303,7 +303,7 @@ class index(mapzen.whosonfirst.elasticsearch.index):
             else:
                 pass
 
-        props['languages'] = languages
+        props['names'] = names
 
         props['counts:names_total'] = count_names_total
         props['counts:names_prefered'] = count_names_prefered
