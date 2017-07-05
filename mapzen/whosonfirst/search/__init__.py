@@ -303,7 +303,7 @@ class index(mapzen.whosonfirst.elasticsearch.index):
             else:
                 pass
 
-        props['names'] = names
+        props['translations'] = translations
 
         props['counts:names_total'] = count_names_total
         props['counts:names_prefered'] = count_names_prefered
