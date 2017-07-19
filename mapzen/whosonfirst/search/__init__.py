@@ -313,7 +313,14 @@ class index(mapzen.whosonfirst.elasticsearch.index):
 
         # https://github.com/whosonfirst/py-mapzen-whosonfirst-search/issues/3
 
-        props['geom:type'] = geojson['geometry']['type']
+        try:
+            props['geom:type'] = geojson['geometry']['type']
+        except Exception, e:
+
+            wofid = props["wof:id"]
+            logging.error("Hey wait a minute... %s is missing a geometry.type property" % wofid)
+
+            raise Exception, e
 
         # because ES suffers from E_EXCESSIVE_CLEVERNESS
 
