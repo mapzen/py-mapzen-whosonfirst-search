@@ -62,14 +62,28 @@ class index(mapzen.whosonfirst.elasticsearch.index):
     def prepare_geojson(self, geojson):
 
         props = geojson['properties']
+        geom = geojson['geom']
 
         # Store a stringified bounding box so that tools like
         # the spelunker can zoom to extent and stuff like that
         # (20150730/thisisaaronland)
 
         bbox = geojson.get('bbox', [])
+
+        # https://github.com/whosonfirst/py-mapzen-whosonfirst-search/issues/25
+
+        if len(bbox) == 4:
+
+            minlon, minlat, maxlon, maxlat = bbox
+
+            props['geom:min_latitude'] = minlat
+            props['geom:min_longitude'] = minlon
+            props['geom:max_latitude'] = maxlat
+            props['geom:max_longitude'] = maxlon
+
         bbox = map(str, bbox)	# oh python...
         bbox = ",".join(bbox)
+
         props['geom:bbox'] = bbox
 
         # ggggggrgrgrgrgrhhnhnnnhnhnhnhnhhzzzzpphphtttt - we shouldn't
