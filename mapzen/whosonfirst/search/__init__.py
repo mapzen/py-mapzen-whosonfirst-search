@@ -62,7 +62,6 @@ class index(mapzen.whosonfirst.elasticsearch.index):
     def prepare_geojson(self, geojson):
 
         props = geojson['properties']
-        geom = geojson['geom']
 
         # Store a stringified bounding box so that tools like
         # the spelunker can zoom to extent and stuff like that
