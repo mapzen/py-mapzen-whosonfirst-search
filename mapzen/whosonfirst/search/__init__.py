@@ -379,7 +379,7 @@ class index(mapzen.whosonfirst.elasticsearch.index):
             'gn:id',
             'gp:id',
             'locality_id',
-            'neighbourhood_id',
+            'neighbourhood_id'
             'region_id',
             'wof:id',
             'wof:belongsto',
@@ -402,6 +402,13 @@ class index(mapzen.whosonfirst.elasticsearch.index):
             'lbl:longitude',
             'mps:latitude',
             'mps:longitude',
+        )
+
+        ima_int_wildcard = (
+        )
+
+        ima_float_wildcard = (
+            'ne:',
         )
 
         isa = type(data)
@@ -447,6 +454,27 @@ class index(mapzen.whosonfirst.elasticsearch.index):
                 return float(data)
 
             else:
+
+                if k:
+
+                    for fl_k in ima_int_wildcard:
+                        if k.startswith(fl_k):
+
+                            try:
+                                data = int(data)
+                                return data
+                            except Exception, e:
+                                logging.error("failed to convert %s (%s) to an int because %s" % (k, data, e))
+
+                    for fl_k in ima_float_wildcard:
+                        if k.startswith(fl_k):
+
+                            try:
+                                data = float(data)
+                                return data
+                            except Exception, e:
+                                logging.error("failed to convert %s (%s) to a float because %s" % (k, data, e))
+
                 return unicode(data)
 
     def load_file(self, f):
