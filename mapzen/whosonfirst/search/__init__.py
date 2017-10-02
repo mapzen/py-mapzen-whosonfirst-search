@@ -402,6 +402,8 @@ class index(mapzen.whosonfirst.elasticsearch.index):
             'lbl:longitude',
             'mps:latitude',
             'mps:longitude',
+            'mz:min_zoom',
+            'mz:max_zoom',
         )
 
         ima_int_wildcard = (
