@@ -379,7 +379,7 @@ class index(mapzen.whosonfirst.elasticsearch.index):
             'gn:id',
             'gp:id',
             'locality_id',
-            'neighbourhood_id'
+            'neighbourhood_id',
             'region_id',
             'wof:id',
             'wof:belongsto',
