@@ -300,7 +300,7 @@ class index(mapzen.whosonfirst.elasticsearch.index):
                     translations.append(k)
 
             except Exception, e:
-                logging.error("failed to parse '%s', because %s" % (k, e))
+                logging.warning("failed to parse '%s', because %s" % (k, e))
                 continue
 
             if not lang in name_langs:
@@ -342,7 +342,7 @@ class index(mapzen.whosonfirst.elasticsearch.index):
         # to 'uuuu'. (20161103/dphiffer)
 
         if "edtf:deprecated" in props and props['edtf:deprecated'] in ("uuuu", ""):
-            logging.warning("FIX %d edtf:deprecated set to uuuu" % props['wof:id'])
+            logging.debug("FIX %d edtf:deprecated set to uuuu" % props['wof:id'])
             del props['edtf:deprecated']
 
         #
@@ -466,7 +466,7 @@ class index(mapzen.whosonfirst.elasticsearch.index):
                                 data = int(data)
                                 return data
                             except Exception, e:
-                                logging.error("failed to convert %s (%s) to an int because %s" % (k, data, e))
+                                logging.debug("failed to convert %s to an int because %s" % (k.encode('utf8'), e))
 
                     for fl_k in ima_float_wildcard:
                         if k.startswith(fl_k):
@@ -475,7 +475,7 @@ class index(mapzen.whosonfirst.elasticsearch.index):
                                 data = float(data)
                                 return data
                             except Exception, e:
-                                logging.error("failed to convert %s (%s) to a float because %s" % (k, data, e))
+                                logging.debug("failed to convert %s to a float because %s" % (k.encode('utf8'), e))
 
                 return unicode(data)
 
