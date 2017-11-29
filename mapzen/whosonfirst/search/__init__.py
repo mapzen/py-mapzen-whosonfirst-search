@@ -300,7 +300,7 @@ class index(mapzen.whosonfirst.elasticsearch.index):
                     translations.append(k)
 
             except Exception, e:
-                logging.error("failed to parse '%s', because %s" % (k, e))
+                logging.warning("failed to parse '%s', because %s" % (k, e))
                 continue
 
             if not lang in name_langs:
@@ -342,7 +342,7 @@ class index(mapzen.whosonfirst.elasticsearch.index):
         # to 'uuuu'. (20161103/dphiffer)
 
         if "edtf:deprecated" in props and props['edtf:deprecated'] in ("uuuu", ""):
-            logging.warning("FIX %d edtf:deprecated set to uuuu" % props['wof:id'])
+            logging.debug("FIX %d edtf:deprecated set to uuuu" % props['wof:id'])
             del props['edtf:deprecated']
 
         #
@@ -402,6 +402,15 @@ class index(mapzen.whosonfirst.elasticsearch.index):
             'lbl:longitude',
             'mps:latitude',
             'mps:longitude',
+            'mz:min_zoom',
+            'mz:max_zoom',
+        )
+
+        ima_int_wildcard = (
+        )
+
+        ima_float_wildcard = (
+            'ne:',
         )
 
         isa = type(data)
@@ -447,6 +456,27 @@ class index(mapzen.whosonfirst.elasticsearch.index):
                 return float(data)
 
             else:
+
+                if k:
+
+                    for fl_k in ima_int_wildcard:
+                        if k.startswith(fl_k):
+
+                            try:
+                                data = int(data)
+                                return data
+                            except Exception, e:
+                                logging.debug("failed to convert %s to an int because %s" % (k.encode('utf8'), e))
+
+                    for fl_k in ima_float_wildcard:
+                        if k.startswith(fl_k):
+
+                            try:
+                                data = float(data)
+                                return data
+                            except Exception, e:
+                                logging.debug("failed to convert %s to a float because %s" % (k.encode('utf8'), e))
+
                 return unicode(data)
 
     def load_file(self, f):
