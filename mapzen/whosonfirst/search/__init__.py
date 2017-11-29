@@ -490,6 +490,11 @@ class index(mapzen.whosonfirst.elasticsearch.index):
 
             yield data
 
+    def index_feature(self, feature):
+
+        prepped = self.prepare_feature(feature)
+        return self.index_document(prepped)
+
     def index_file(self, path):
 
         if mapzen.whosonfirst.uri.is_alt_file(path):
