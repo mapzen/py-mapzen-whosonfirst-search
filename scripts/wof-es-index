@@ -3,20 +3,19 @@
 import sys
 import os.path
 import logging
-import geojson
 
 import mapzen.whosonfirst.search
-import mapzen.whosonfirst.utils
+import mapzen.whosonfirst.index
 
 if __name__ == '__main__':
 
     import optparse
     opt_parser = optparse.OptionParser()
 
-    opt_parser.add_option('-s', '--source', dest='source', action='store', default=None, help='Where to read files from')
+    opt_parser.add_option('-m', '--mode', dest='mode', action='store', default='files', help='...')
     opt_parser.add_option('-b', '--bulk', dest='bulk', action='store_true', default=False, help='Index files in bulk mode (default is False)')
 
-    opt_parser.add_option('--index', dest='index', action='store', default='whosonfirst', help='Where to write the records to (default is whosonfirst)')
+    opt_parser.add_option('--index', dest='index', action='store', default='spelunker', help='Where to write the records to (default is spelunker)')
     opt_parser.add_option('--host', dest='host', action='store', default='localhost', help='What host your search index lives (default is localhost)')
     opt_parser.add_option('--port', dest='port', action='store', default=9200, help='What port your search index lives on (default is 9200)')
     opt_parser.add_option('--timeout', dest='timeout', action='store', default=600, help='Timeout in seconds for talking to you search index lives on (default is 600)')
@@ -28,25 +27,35 @@ if __name__ == '__main__':
     if options.verbose:
         logging.basicConfig(level=logging.DEBUG)
     else:
-        logging.basicConfig(level=logging.WARNING)
-
-    idx = mapzen.whosonfirst.search.index(host=options.host, port=options.port, timeout=options.timeout, index=options.index)
-
-    logging.info("indexing from %s to %s" % (options.source, options.index))
-    source = os.path.abspath(options.source)
-    crawl = mapzen.whosonfirst.utils.crawl(source)
+        logging.basicConfig(level=logging.INFO)
+    
+    search_idx = mapzen.whosonfirst.search.index(host=options.host, port=options.port, timeout=options.timeout, index=options.index)
 
     if options.bulk:
-        idx.index_files(crawl)
+
+        def features():
+            
+            def cb(f):
+                return f
+            
+            idx = mapzen.whosonfirst.index.indexer(options.mode, cb)
+            
+            for f in idx.iter_paths(args):
+                yield search_idx.prepare_feature_bulk(f)
+
+        iter = features()
+        search_idx.index_documents_bulk(iter)
 
     else:
-
-        for path in crawl:
-
-            try:
-                logging.debug("index %s" % path)
-                idx.index_file(path)
-            except Exception, e:
-                logging.error("failed to index %s, because %s" % (path, e))
+    
+        def cb(f):
+            
+            logging.info("INDEX %s" % f["properties"]["wof:id"])
+        
+            if not search_idx.index_feature(f):
+                raise Exception, "failed to index %s" % f["properties"]["wof:id"]
+    
+        idx = mapzen.whosonfirst.index.indexer(options.mode, cb)
+        idx.index_paths(args)
 
     sys.exit()

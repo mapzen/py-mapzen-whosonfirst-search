@@ -28,8 +28,6 @@ setup(
     scripts=[
         'scripts/wof-es-id',
         'scripts/wof-es-index',
-        'scripts/wof-es-index-files',
-        'scripts/wof-es-index-filelist',
         'scripts/wof-es-prepare',
         'scripts/wof-es-rawquery',
         ],
