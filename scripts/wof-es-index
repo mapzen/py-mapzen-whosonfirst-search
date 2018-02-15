@@ -9,11 +9,14 @@ import mapzen.whosonfirst.index
 
 if __name__ == '__main__':
 
+    valid_modes = mapzen.whosonfirst.index.valid_modes()
+    valid_modes = ", ".join(valid_modes)
+    
     import optparse
     opt_parser = optparse.OptionParser()
 
-    opt_parser.add_option('-s', '--source', dest='source', action='store', default=None, help='...')    
-    opt_parser.add_option('-m', '--mode', dest='mode', action='store', default=None, help='...')
+    opt_parser.add_option('-s', '--source', dest='source', action='store', default=None, help="The path to the directory you want to index. This flag is deprecated, please use -m(ode) directory) instead")    
+    opt_parser.add_option('-m', '--mode', dest='mode', action='store', default=None, help="A valid indexing mode. Valid modes are: %s." % valid_modes)
     opt_parser.add_option('-b', '--bulk', dest='bulk', action='store_true', default=False, help='Index files in bulk mode (default is False)')
 
     opt_parser.add_option('--index', dest='index', action='store', default='spelunker', help='Where to write the records to (default is spelunker)')
