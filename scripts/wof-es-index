@@ -12,7 +12,8 @@ if __name__ == '__main__':
     import optparse
     opt_parser = optparse.OptionParser()
 
-    opt_parser.add_option('-m', '--mode', dest='mode', action='store', default='files', help='...')
+    opt_parser.add_option('-s', '--source', dest='source', action='store', default=None, help='...')    
+    opt_parser.add_option('-m', '--mode', dest='mode', action='store', default=None, help='...')
     opt_parser.add_option('-b', '--bulk', dest='bulk', action='store_true', default=False, help='Index files in bulk mode (default is False)')
 
     opt_parser.add_option('--index', dest='index', action='store', default='spelunker', help='Where to write the records to (default is spelunker)')
@@ -28,7 +29,17 @@ if __name__ == '__main__':
         logging.basicConfig(level=logging.DEBUG)
     else:
         logging.basicConfig(level=logging.INFO)
-    
+
+    if not options.mode and not options.source:
+        logging.error("You must specify either -m(ode) or -s(source)")
+        sys.exit(1)
+
+    if not options.mode:
+        logging.warning("-s(source) is deprecated - it's okay this time but please use -m(ode) directory instead")
+        
+        options.mode = 'directory'
+        args.append(options.source)
+
     search_idx = mapzen.whosonfirst.search.index(host=options.host, port=options.port, timeout=options.timeout, index=options.index)
 
     if options.bulk:
@@ -47,15 +58,13 @@ if __name__ == '__main__':
         search_idx.index_documents_bulk(iter)
 
     else:
-    
+
         def cb(f):
-            
-            logging.info("INDEX %s" % f["properties"]["wof:id"])
-        
+
             if not search_idx.index_feature(f):
                 raise Exception, "failed to index %s" % f["properties"]["wof:id"]
     
         idx = mapzen.whosonfirst.index.indexer(options.mode, cb)
         idx.index_paths(args)
-
+        
     sys.exit()
