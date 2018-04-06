@@ -8,6 +8,7 @@ import logging
 import math
 import tempfile
 
+import edtf
 import urllib
 import requests
 
@@ -110,17 +111,50 @@ class index(mapzen.whosonfirst.elasticsearch.index):
         # alt placetype names/ID
 
         placetype = props['wof:placetype']
-        placetype = mapzen.whosonfirst.placetypes.placetype(placetype)
 
-        placetype_id = placetype.id()
-        placetype_names = []
+        try:
+            placetype = mapzen.whosonfirst.placetypes.placetype(placetype)
 
-        for n in placetype.names():
-            placetype_names.append(unicode(n))
+            placetype_id = placetype.id()
+            placetype_names = []
+            
+            for n in placetype.names():
+                placetype_names.append(unicode(n))
 
-        props['wof:placetype_id'] = placetype_id
-        props['wof:placetype_names'] = placetype_names
+            props['wof:placetype_id'] = placetype_id
+            props['wof:placetype_names'] = placetype_names
+            
+        except Exception, e:
+            logging.warning("Invalid or unknown placetype (%s) - %s" % (placetype, e))
 
+        # Dates
+
+        # skip "uuuu" because it resolves to 0001-01-01 9999-12-31
+
+        inception = props.get("edtf:inception", "")
+        cessation = props.get("edtf:cessation", "")        
+
+        if not inception in ("", "uuuu"):
+            try:
+                
+                e = edtf.parse_edtf(inception)
+                props["date_inception_lower"] = e.lower_strict().strftime("%Y-%m-%d")
+                props["date_inception_upper"] = e.upper_strict().strftime("%Y-%m-%d")                
+                
+            except Exception, e:
+                logging.warning("Failed to parse inception '%s' because %s" % (inception, e))
+
+        if not cessation in ("", "uuuu"):                
+            try:
+                
+                e = edtf.parse_edtf(cessation)
+                props["date_cessation_lower"] = e.lower_strict().strftime("%Y-%m-%d")
+                props["date_cessation_upper"] = e.upper_strict().strftime("%Y-%m-%d")                
+                
+            except Exception, e:
+                logging.warning("Failed to parse cessation '%s' because %s" % (cessation, e))
+                            
+            
         # Categories
 
         categories = []
