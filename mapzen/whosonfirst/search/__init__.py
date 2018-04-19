@@ -144,9 +144,18 @@ class index(mapzen.whosonfirst.elasticsearch.index):
             except Exception, e:
                 logging.warning("Failed to parse inception '%s' because %s" % (inception, e))
 
-        if not cessation in ("", "uuuu"):                
-            try:
+        if not cessation in ("", "uuuu", "open"):                
+
+            # we'll never get here because of the test above but the point
+            # is a) edtf.py freaks out when an edtf string is just "open" (not
+            # sure if this is a me-thing or a them-thing and b) edtf.py interprets
+            # "open" as "today" which is not what we want to store in the database
+            # (20180418/thisisaaronland)
+
+            if cessation == "open" and not inception in ("", "uuuu"):
+                cessation = "%s/open" % inception
                 
+            try:                
                 e = edtf.parse_edtf(cessation)
                 props["date_cessation_lower"] = e.lower_strict().strftime("%Y-%m-%d")
                 props["date_cessation_upper"] = e.upper_strict().strftime("%Y-%m-%d")                
