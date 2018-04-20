@@ -8,7 +8,6 @@ import logging
 import math
 import tempfile
 
-import edtf
 import urllib
 import requests
 
@@ -19,6 +18,8 @@ import mapzen.whosonfirst.utils
 import mapzen.whosonfirst.placetypes
 import mapzen.whosonfirst.elasticsearch
 import mapzen.whosonfirst.uri
+
+import utils as search_utils
 
 class index(mapzen.whosonfirst.elasticsearch.index):
 
@@ -45,7 +46,7 @@ class index(mapzen.whosonfirst.elasticsearch.index):
     # https://stackoverflow.com/questions/20288770/how-to-use-bulk-api-to-store-the-keywords-in-es-by-using-python
 
     def prepare_feature_bulk(self, feature):
-       
+    
         props = feature['properties']
         id = props['wof:id']
 
@@ -129,41 +130,11 @@ class index(mapzen.whosonfirst.elasticsearch.index):
 
         # Dates
 
-        # skip "uuuu" because it resolves to 0001-01-01 9999-12-31
-
         inception = props.get("edtf:inception", "")
         cessation = props.get("edtf:cessation", "")        
 
-        if not inception in ("", "uuuu"):
-            try:
-                
-                e = edtf.parse_edtf(inception)
-                props["date_inception_lower"] = e.lower_strict().strftime("%Y-%m-%d")
-                props["date_inception_upper"] = e.upper_strict().strftime("%Y-%m-%d")                
-                
-            except Exception, e:
-                logging.warning("Failed to parse inception '%s' because %s" % (inception, e))
+        search_utils.append_edtf_date_ranges(props, inception, cessation)
 
-        if not cessation in ("", "uuuu", "open"):                
-
-            # we'll never get here because of the test above but the point
-            # is a) edtf.py freaks out when an edtf string is just "open" (not
-            # sure if this is a me-thing or a them-thing and b) edtf.py interprets
-            # "open" as "today" which is not what we want to store in the database
-            # (20180418/thisisaaronland)
-
-            if cessation == "open" and not inception in ("", "uuuu"):
-                cessation = "%s/open" % inception
-                
-            try:                
-                e = edtf.parse_edtf(cessation)
-                props["date_cessation_lower"] = e.lower_strict().strftime("%Y-%m-%d")
-                props["date_cessation_upper"] = e.upper_strict().strftime("%Y-%m-%d")                
-                
-            except Exception, e:
-                logging.warning("Failed to parse cessation '%s' because %s" % (cessation, e))
-                            
-            
         # Categories
 
         categories = []
@@ -543,8 +514,12 @@ class index(mapzen.whosonfirst.elasticsearch.index):
 
         data = self.load_file(f)
 
-        data = self.prepare_feature_bulk(data)
-        logging.debug("yield %s" % data)
+        try:
+            data = self.prepare_feature_bulk(data)
+            logging.debug("yield %s" % data)
+        except Exception, e:
+            logging.warning("failed to prepare data for %s because %s" % (f, e))
+            raise Exception, e
 
         return data
 

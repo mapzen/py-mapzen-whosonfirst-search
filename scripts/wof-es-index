@@ -24,6 +24,8 @@ if __name__ == '__main__':
     opt_parser.add_option('--port', dest='port', action='store', default=9200, help='What port your search index lives on (default is 9200)')
     opt_parser.add_option('--timeout', dest='timeout', action='store', default=600, help='Timeout in seconds for talking to you search index lives on (default is 600)')
 
+    opt_parser.add_option('--liberal', dest='liberal', action='store_true', default=False, help='Be forgiving and do not stop execution if there are any errors preparing documents for indexing (default is false)')
+
     opt_parser.add_option('-v', '--verbose', dest='verbose', action='store_true', default=False, help='Be chatty (default is false)')
 
     options, args = opt_parser.parse_args()
@@ -55,7 +57,15 @@ if __name__ == '__main__':
             idx = mapzen.whosonfirst.index.indexer(options.mode, cb)
             
             for f in idx.iter_paths(args):
-                yield search_idx.prepare_feature_bulk(f)
+
+                try:
+                    yield search_idx.prepare_feature_bulk(f)
+                except Exception, e:
+                    logging.warning("failed to prepare feature because %s" % e)
+                    logging.debug(f)
+
+                    if not options.liberal:
+                        raise Exception, e
 
         iter = features()
         search_idx.index_documents_bulk(iter)
