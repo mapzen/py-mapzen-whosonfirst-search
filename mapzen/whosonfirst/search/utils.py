@@ -3,7 +3,7 @@
 # don't know and probably not but it will do for now (20180420/thisisaaronland)
 
 import edtf
-import arrow
+import arrow	# because datetime.strftime can't format dates < 1900 because... computers ????
 import logging
 
 def append_edtf_date_ranges(props, inception, cessation):
@@ -12,7 +12,7 @@ def append_edtf_date_ranges(props, inception, cessation):
 
     fmt = "YYYY-MM-DD"
 
-    # skip "uuuu" because it resolves to 0001-01-01 9999-12-31
+    # skip "uuuu" because it resolves to 0001-01-01 9999-12-31 (in edtf.py land)
         
     if not inception in ("", "uuuu"):
         try:
