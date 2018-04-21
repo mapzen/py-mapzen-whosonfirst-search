@@ -3,20 +3,27 @@
 # don't know and probably not but it will do for now (20180420/thisisaaronland)
 
 import edtf
+import arrow
 import logging
 
 def append_edtf_date_ranges(props, inception, cessation):
 
     append = False
 
+    fmt = "YYYY-MM-DD"
+
     # skip "uuuu" because it resolves to 0001-01-01 9999-12-31
-    
+        
     if not inception in ("", "uuuu"):
         try:
             
-            e = edtf.parse_edtf(inception)
-            props["date_inception_lower"] = e.lower_strict().strftime("%Y-%m-%d")
-            props["date_inception_upper"] = e.upper_strict().strftime("%Y-%m-%d")                
+            e = edtf.parse_edtf(unicode(inception))
+
+            lower = arrow.get(e.lower_strict())
+            upper = arrow.get(e.upper_strict())
+
+            props["date_inception_lower"] = lower.format(fmt)
+            props["date_inception_upper"] = upper.format(fmt)
 
             append = True
 
@@ -35,9 +42,13 @@ def append_edtf_date_ranges(props, inception, cessation):
             cessation = "%s/open" % inception
                 
         try:                
-            e = edtf.parse_edtf(cessation)
-            props["date_cessation_lower"] = e.lower_strict().strftime("%Y-%m-%d")
-            props["date_cessation_upper"] = e.upper_strict().strftime("%Y-%m-%d")                
+            e = edtf.parse_edtf(unicode(cessation))
+
+            lower = arrow.get(e.lower_strict())
+            upper = arrow.get(e.upper_strict())
+
+            props["date_cessation_lower"] = lower.format(fmt)
+            props["date_cessation_upper"] = upper.format(fmt)
             
             append = True
 
