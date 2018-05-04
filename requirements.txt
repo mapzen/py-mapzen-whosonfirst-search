@@ -1,6 +1,4 @@
 geojson
-edtf
-arrow
 git+https://github.com/whosonfirst/py-machinetag-elasticsearch#egg=machinetag.elasticsearch
 git+https://github.com/whosonfirst/py-mapzen-whosonfirst-elasticsearch#egg=mapzen.whosonfirst.elasticsearch
 git+https://github.com/whosonfirst/py-mapzen-whosonfirst-machinetag#egg=mapzen.whosonfirst.machinetag
