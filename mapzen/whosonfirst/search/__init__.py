@@ -19,8 +19,6 @@ import mapzen.whosonfirst.placetypes
 import mapzen.whosonfirst.elasticsearch
 import mapzen.whosonfirst.uri
 
-import utils as search_utils
-
 class index(mapzen.whosonfirst.elasticsearch.index):
 
     def __init__(self, **kwargs):
@@ -130,11 +128,11 @@ class index(mapzen.whosonfirst.elasticsearch.index):
 
         # Dates
 
-        inception = props.get("edtf:inception", "")
-        cessation = props.get("edtf:cessation", "")        
-
-        search_utils.append_edtf_date_ranges(props, inception, cessation)
-
+        # there used to be code here to set "private" ES date fields for EDTF stuff
+        # but it has been removed in favour of explicit date:inception/cessation_upper/lower
+        # properties that get added by py-mapzen-whosonfirst-export 0.9.9 +
+        # (20180504/thisisaaronland)
+              
         # Categories
 
         categories = []
