@@ -76,7 +76,7 @@ if __name__ == '__main__':
 
             if not search_idx.index_feature(f):
                 raise Exception, "failed to index %s" % f["properties"]["wof:id"]
-    
+            
         idx = mapzen.whosonfirst.index.indexer(options.mode, cb)
         idx.index_paths(args)
         

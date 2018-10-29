@@ -458,7 +458,16 @@ class index(mapzen.whosonfirst.elasticsearch.index):
                 if data == '':
                     return 0
 
-                return int(data)
+                # I seriously hate you, Python...
+                # int('579.0')
+                # Traceback (most recent call last):
+                #   File "<stdin>", line 1, in <module>
+                # int(float('589.0'))
+                # 589
+                #
+                # (20181029/thisisaaronland)
+                
+                return int(float(data))
 
             elif k and k in ima_float:
 
