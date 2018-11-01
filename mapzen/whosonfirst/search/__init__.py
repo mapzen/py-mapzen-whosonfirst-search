@@ -100,6 +100,7 @@ class index(mapzen.whosonfirst.elasticsearch.index):
             u'ne:adm0_dif',
             u'ne:level',
             u'fsgov:ajo_pvm',
+            u'statoids:as_of_date',
         )
 
         for bbq in omgwtf:
