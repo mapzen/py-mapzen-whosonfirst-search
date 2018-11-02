@@ -68,7 +68,7 @@ if __name__ == '__main__':
                         raise Exception, e
 
         iter = features()
-        search_idx.index_documents_bulk(iter)
+        search_idx.index_documents_bulk(iter, strict=False)
 
     else:
 

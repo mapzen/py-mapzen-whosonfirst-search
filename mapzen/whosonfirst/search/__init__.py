@@ -99,6 +99,7 @@ class index(mapzen.whosonfirst.elasticsearch.index):
             u'ne:su_dif',
             u'ne:FIPS_10_',
             u'ne:ISO_A3_EH',
+            u'ne:ISO_A3',
             u'ne:adm0_dif',
             u'ne:level',
             u'fsgov:ajo_pvm',
