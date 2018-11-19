@@ -18,6 +18,7 @@ if __name__ == '__main__':
     opt_parser.add_option('-s', '--source', dest='source', action='store', default=None, help="The path to the directory you want to index. This flag is deprecated, please use -m(ode) directory) instead")    
     opt_parser.add_option('-m', '--mode', dest='mode', action='store', default=None, help="A valid indexing mode. Valid modes are: %s." % valid_modes)
     opt_parser.add_option('-b', '--bulk', dest='bulk', action='store_true', default=False, help='Index files in bulk mode (default is False)')
+    opt_parser.add_option('-c', '--count', dest='count', action='store', default=5000, help='The number of documents to index in bulk mode')
 
     opt_parser.add_option('--index', dest='index', action='store', default='spelunker', help='Where to write the records to (default is spelunker)')
     opt_parser.add_option('--host', dest='host', action='store', default='localhost', help='What host your search index lives (default is localhost)')
@@ -68,7 +69,14 @@ if __name__ == '__main__':
                         raise Exception, e
 
         iter = features()
-        search_idx.index_documents_bulk(iter, strict=False)
+
+        count = int(options.count)
+        strict = True
+
+        if options.liberal:
+            strict = False
+
+        search_idx.index_documents_bulk(iter, strict=strict, count=count)
 
     else:
 
