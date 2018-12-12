@@ -91,6 +91,27 @@ class index(mapzen.whosonfirst.elasticsearch.index):
         # getting stuff done we're going to be ruthless about things...
         # (21050806/thisisaaronland)
 
+        # I mean seriously... what????
+        #
+        # DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): localhost
+        # DEBUG:urllib3.connectionpool:http://localhost:9200 "POST /collection/region/85688637 HTTP/1.1" 400 313
+        # ERROR:root:failed to do_index http://localhost:9200/collection/region/85688637: 400 {"error":{"root_cause":[{"type":
+        # "mapper_parsing_exception","reason":"failed to parse [ne:wikipedia]"}],"type":"mapper_parsing_exception","reason":
+        # "failed to parse [ne:wikipedia]","caused_by":{"type":"number_format_exception","reason":"For input string:
+        # "http://en.wikipedia.org/wiki/California\""}},"status":400}
+        # DEBUG:mapzen.whosonfirst.elasticsearch:Finished call to 'mapzen.whosonfirst.elasticsearch.do_index' after 5.206(s),
+        # this was the 2nd time calling it.
+        #
+        # some or all of this should/might be addressed by @vicchi's work to generate
+        # JSON schemas from the whosonfirst-properties repo which in turn could be used
+        # to generate ES schemas that don't require a "oh god, just fuck it and give up"
+        # kill list but something something something yak-shaving something something something
+        #
+        # see also: https://whosonfirst.org/blog/2018/05/25/three-steps-backwards/
+        #           https://github.com/whosonfirst/whosonfirst-json-schema
+        #
+        # (20181212/thisisaaronland)
+
         omgwtf = (
             u'ne:fips_10_',
             u'ne:gdp_md_est',
@@ -101,6 +122,7 @@ class index(mapzen.whosonfirst.elasticsearch.index):
             u'ne:ISO_A3_EH',
             u'ne:ISO_A3',
             u'ne:adm0_dif',
+            u'ne:wikipedia',
             u'ne:level',
             u'fsgov:ajo_pvm',
             u'statoids:as_of_date',
