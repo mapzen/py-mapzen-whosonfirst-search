@@ -1,5 +1,6 @@
 geojson
 requests
+tenacity
 git+https://github.com/whosonfirst/py-machinetag#egg=machinetag
 git+https://github.com/whosonfirst/py-machinetag-elasticsearch#egg=machinetag.elasticsearch
 git+https://github.com/whosonfirst/py-mapzen-whosonfirst-machinetag#egg=mapzen.whosonfirst.machinetag
