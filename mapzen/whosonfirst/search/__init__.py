@@ -150,7 +150,7 @@ class index(mapzen.whosonfirst.elasticsearch.index):
             props['wof:placetype_names'] = placetype_names
             
         except Exception, e:
-            logging.warning("Invalid or unknown placetype (%s) - %s" % (placetype, e))
+            logging.debug("Invalid or unknown placetype (%s) - %s" % (placetype, e))
 
         # Dates
 
