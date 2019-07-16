@@ -127,7 +127,9 @@ class index(mapzen.whosonfirst.elasticsearch.index):
             u'fsgov:ajo_pvm',
             u'statoids:as_of_date',
             u'src:population:date',	# https://github.com/whosonfirst-data/whosonfirst-data/issues/1662
-            u'src:population_date',	# https://github.com/whosonfirst-data/whosonfirst-data/issues/1662            
+            u'src:population_date',	# https://github.com/whosonfirst-data/whosonfirst-data/issues/1662
+            u'de-bkg:wsk',		# https://github.com/whosonfirst/py-mapzen-whosonfirst-search/issues/27
+            u'ne:WB_A2',
         )
 
         for bbq in omgwtf:
