@@ -1,4 +1,6 @@
-import types
+# Python 3 migration-ify
+# (20200910/vicchi)
+# import types
 import os
 import os.path
 import csv
@@ -59,15 +61,15 @@ class index(mapzen.whosonfirst.elasticsearch.index):
             '_source': body
         }
 
-    def prepare_geojson(self, geojson):
+    def prepare_geojson(self, geojson_doc):
 
-        props = geojson['properties']
+        props = geojson_doc['properties']
 
         # Store a stringified bounding box so that tools like
         # the spelunker can zoom to extent and stuff like that
         # (20150730/thisisaaronland)
 
-        bbox = geojson.get('bbox', [])
+        bbox = geojson_doc.get('bbox', [])
 
         # https://github.com/whosonfirst/py-mapzen-whosonfirst-search/issues/25
 
@@ -133,7 +135,9 @@ class index(mapzen.whosonfirst.elasticsearch.index):
         )
 
         for bbq in omgwtf:
-            if props.has_key(bbq):
+            # Python 3 migration-ify
+            # (20200910/vicchi)
+            if bbq in props:
                 logging.debug("remove tag '%s' because ES suffers from E_EXCESSIVE_CLEVERNESS" % bbq)
                 del(props[bbq])
 
@@ -147,13 +151,18 @@ class index(mapzen.whosonfirst.elasticsearch.index):
             placetype_id = placetype.id()
             placetype_names = []
             
-            for n in placetype.names():
-                placetype_names.append(unicode(n))
+            # Python 3 migration-ify
+            # (20200910/vicchi)
+            names = placetype.names()
+            for n in names:
+                placetype_names.append(str(n))
 
             props['wof:placetype_id'] = placetype_id
             props['wof:placetype_names'] = placetype_names
             
-        except Exception, e:
+        # Python 3 migration-ify
+        # (20200910/vicchi)
+        except Exception as e:
             logging.debug("Invalid or unknown placetype (%s) - %s" % (placetype, e))
 
         # Dates
@@ -163,10 +172,6 @@ class index(mapzen.whosonfirst.elasticsearch.index):
         # properties that get added by py-mapzen-whosonfirst-export 0.9.9 +
         # (20180504/thisisaaronland)
               
-        # Categories
-
-        categories = []
-
         # wof categories
 
         wof_categories = []
@@ -265,7 +270,6 @@ class index(mapzen.whosonfirst.elasticsearch.index):
 
         conc = props.get('wof:concordances', {})
 
-
         # Because Boundary Issues was careless with how it encoded 'array()'
         # See: https://github.com/whosonfirst/whosonfirst-www-boundaryissues/commit/436607e41b51890080064515582240bbedda633f
         # (20161031/dphiffer)
@@ -278,7 +282,9 @@ class index(mapzen.whosonfirst.elasticsearch.index):
         # this is faster and easier than standing around in ES-quicksand...
         # (20160518/thisisaaronland)
 
-        props['wof:concordances_sources'] = conc.keys()
+        # Python 3 migration-ify
+        # (20200910/vicchi)
+        props['wof:concordances_sources'] = list(conc.keys())
 
         # Misc counters
 
@@ -313,7 +319,7 @@ class index(mapzen.whosonfirst.elasticsearch.index):
 
         name_langs = []
 
-        translations = [];
+        translations = []
 
         for k, v in props.items():
 
@@ -341,7 +347,9 @@ class index(mapzen.whosonfirst.elasticsearch.index):
                 if not k in translations:
                     translations.append(k)
 
-            except Exception, e:
+            # Python 3 migration-ify
+            # (20200910/vicchi)
+            except Exception as e:
                 logging.warning("failed to parse '%s', because %s" % (k, e))
                 continue
 
@@ -369,13 +377,18 @@ class index(mapzen.whosonfirst.elasticsearch.index):
         # https://github.com/whosonfirst/py-mapzen-whosonfirst-search/issues/3
 
         try:
-            props['geom:type'] = geojson['geometry']['type']
-        except Exception, e:
+            props['geom:type'] = geojson_doc['geometry']['type']
+
+        # Python 3 migration-ify
+        # (20200910/vicchi)
+        except Exception as e:
 
             wofid = props["wof:id"]
             logging.error("Hey wait a minute... %s is missing a geometry.type property" % wofid)
 
-            raise Exception, e
+            # Python 3 migration-ify
+            # (20200910/vicchi)
+            raise Exception(e)
 
         # because ES suffers from E_EXCESSIVE_CLEVERNESS
 
@@ -387,12 +400,12 @@ class index(mapzen.whosonfirst.elasticsearch.index):
             logging.debug("FIX %d edtf:deprecated set to uuuu" % props['wof:id'])
             del props['edtf:deprecated']
 
-        #
-        
-        fh = tempfile.NamedTemporaryFile()
+        # Python 3 migration-ify
+        # (20200910/vicchi)
+        fh = tempfile.NamedTemporaryFile('w+')
         tmpname = fh.name
 
-        json.dump(geojson, fh)
+        json.dump(geojson_doc, fh)
         fsize = os.stat(tmpname).st_size
 
         fh.close()
@@ -455,18 +468,19 @@ class index(mapzen.whosonfirst.elasticsearch.index):
             'ne:',
         )
 
-        isa = type(data)
-
-        if isa == types.DictType:
+        # Python 3 migration-ify
+        # (20200910/vicchi)
+        if isinstance(data, dict):
 
             for k, v in data.items():
-                k = unicode(k)
                 v = self.enstringify(v, key=k)
                 data[k] = v
 
             return data
 
-        elif isa == types.ListType:
+        # Python 3 migration-ify
+        # (20200910/vicchi)
+        elif isinstance(data, list):
 
             str_data = []
 
@@ -475,8 +489,10 @@ class index(mapzen.whosonfirst.elasticsearch.index):
 
             return str_data
 
-        elif isa == types.NoneType:
-            return unicode("")
+        # Python 3 migration-ify
+        # (20200910/vicchi)
+        elif isinstance(data, type(None)):
+            return ""
 
         else:
 
@@ -516,7 +532,10 @@ class index(mapzen.whosonfirst.elasticsearch.index):
                             try:
                                 data = int(data)
                                 return data
-                            except Exception, e:
+
+                            # Python 3 migration-ify
+                            # (20200910/vicchi)
+                            except Exception as e:
                                 logging.debug("failed to convert %s to an int because %s" % (k.encode('utf8'), e))
 
                     for fl_k in ima_float_wildcard:
@@ -525,19 +544,25 @@ class index(mapzen.whosonfirst.elasticsearch.index):
                             try:
                                 data = float(data)
                                 return data
-                            except Exception, e:
+                            
+                            # Python 3 migration-ify
+                            # (20200910/vicchi)
+                            except Exception as e:
                                 logging.debug("failed to convert %s to a float because %s" % (k.encode('utf8'), e))
 
-                return unicode(data)
+                return data
 
     def load_file(self, f):
 
         try:
             fh = open(f, 'r')
             return geojson.load(fh)
-        except Exception, e:
+
+        # Python 3 migration-ify
+        # (20200910/vicchi)
+        except Exception as e:
             logging.error("failed to open %s, because %s" % (f, e))
-            raise Exception, e
+            raise Exception(e)
 
     def prepare_file(self, f):
 
@@ -554,9 +579,12 @@ class index(mapzen.whosonfirst.elasticsearch.index):
         try:
             data = self.prepare_feature_bulk(data)
             logging.debug("yield %s" % data)
-        except Exception, e:
+
+        # Python 3 migration-ify
+        # (20200910/vicchi)
+        except Exception as e:
             logging.warning("failed to prepare data for %s because %s" % (f, e))
-            raise Exception, e
+            raise Exception(e)
 
         return data
 
@@ -640,7 +668,8 @@ class search(mapzen.whosonfirst.elasticsearch.search):
 
     def __init__(self, **kwargs):
 
-        mapzen.whosonfirst.elasticsearch.query.__init__(self, **kwargs)
+        # mapzen.whosonfirst.elasticsearch.query.__init__(self, **kwargs)
+        super().__init__(**kwargs)
 
     def enfeaturify(self, row):
 
@@ -692,4 +721,4 @@ class query(search):
 
 if __name__ == '__main__':
 
-    print "Please rewrite me"
+    print("Please rewrite me")
