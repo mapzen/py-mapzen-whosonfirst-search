@@ -61,12 +61,12 @@ if __name__ == '__main__':
 
                 try:
                     yield search_idx.prepare_feature_bulk(f)
-                except Exception, e:
+                except Exception as e:
                     logging.warning("failed to prepare feature because %s" % e)
                     logging.debug(f)
 
                     if not options.liberal:
-                        raise Exception, e
+                        raise Exception(e)
 
         iter = features()
 
@@ -81,9 +81,8 @@ if __name__ == '__main__':
     else:
 
         def cb(f):
-
             if not search_idx.index_feature(f):
-                raise Exception, "failed to index %s" % f["properties"]["wof:id"]
+                raise Exception("failed to index %s" % f["properties"]["wof:id"])
             
         idx = mapzen.whosonfirst.index.indexer(options.mode, cb)
         idx.index_paths(args)
