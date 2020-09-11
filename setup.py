@@ -18,6 +18,7 @@ version = open("VERSION").read()
 desc = open("README.md").read()
 
 setup(
+    python_requires='>3',
     name='mapzen.whosonfirst.search',
     namespace_packages=['mapzen', 'mapzen.whosonfirst'],
     version=version,
